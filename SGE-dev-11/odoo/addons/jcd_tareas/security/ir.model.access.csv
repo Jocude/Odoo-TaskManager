@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_jcd_proyecto_user,access_jcd_proyecto_user,model_jcd_tareas_jcd_proyecto,base.group_user,1,1,1,0
+access_jcd_proyecto_manager,access_jcd_proyecto_manager,model_jcd_tareas_jcd_proyecto,jcd_tareas.group_jcd_proyecto_manager,1,1,1,1
+access_jcd_tarea_user,access_jcd_tarea_user,model_jcd_tareas_tarea,base.group_user,1,1,1,0
+access_jcd_tarea_manager,access_jcd_tarea_manager,model_jcd_tareas_tarea,jcd_tareas.group_jcd_proyecto_manager,1,1,1,1
+access_jcd_tarea_comentario,access_jcd_tarea_comentario,model_jcd_tareas_tarea_comentario,base.group_user,1,1,1,1
+access_jcd_etiqueta,access_jcd_etiqueta,model_jcd_tareas_etiqueta,base.group_user,1,1,1,1

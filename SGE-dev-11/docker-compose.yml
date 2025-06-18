@@ -1,0 +1,53 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=odoo
+      - POSTGRES_USER=odoo
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - pgdata:/var/lib/postgresql/data/pgdata
+    ports:
+      # <Puerto expuesto> : < Puerto dentro del container>
+      # Solo para desarrollo. Comentar en produccion
+      - '5432:5432'
+    expose:
+      # Abre el puerto 5432 en el container al exterior sin tocar nada de la configuración del postgresql
+      # Solo para desarrollo. Comentar en produccion
+      - '5432'
+  odoo:
+    image: odoo:17.0
+    container_name: odoo
+    depends_on:
+      - db
+    ports:
+      - "8069:8069"
+    tty: true
+    command: -- --dev=reload
+    # command: odoo scaffold module_technical_name /mnt/extra-addons
+    volumes:
+      - ./odoo/addons:/mnt/extra-addons
+      - ./odoo/config:/etc/odoo
+      - odoo_log:/var/log/odoo/
+      - odoo_data:/var/lib/odoo
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: Passw0rd
+      PGADMIN_LISTEN_PORT: 80
+      PGADMIN_SERVER_JSON_FILE: /pgadmin4/servers.json
+    ports:
+      - "8080:80"
+    links:
+      - "db:pgsql-server"
+    volumes:
+      - ./pgadmin4/servers.json:/pgadmin4/servers.json
+volumes:
+    pgdata:
+    odoo_log:
+    odoo_data:

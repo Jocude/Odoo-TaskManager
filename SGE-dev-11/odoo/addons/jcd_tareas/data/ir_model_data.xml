@@ -1,0 +1,10 @@
+<odoo>
+    <data noupdate="1">
+        <!-- Registro del modelo jcd_tareas.etiqueta -->
+        <record id="model_jcd_tareas_etiqueta" model="ir.model">
+            <field name="name">jcd_tareas.etiqueta</field>  <!-- Aseguramos que sea correcto -->
+            <field name="model">jcd_tareas.etiqueta</field> <!-- Aseguramos que sea correcto -->
+            <field name="state">manual</field>
+        </record>
+    </data>
+</odoo>

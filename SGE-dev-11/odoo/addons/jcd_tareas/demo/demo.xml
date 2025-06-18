@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- Usuario Jorge -->
+        <record id="user_jorge" model="res.users">
+            <field name="name">Jorge</field>
+            <field name="login">jorge</field>
+            <field name="email">jorge@ejemplo.com</field>
+            <field name="groups_id" eval="[(6, 0, [ref('base.group_user')])]"/>
+            <field name="image_1920" type="base64" file="jcd_tareas/Images/megustalafruta.png"/>
+        </record>
+
+        <!-- Etiquetas -->
+        <record id="etiqueta_urgente" model="jcd_tareas.etiqueta">
+            <field name="name">Urgente</field>
+            <field name="color">1</field>
+        </record>
+        <record id="etiqueta_diseno" model="jcd_tareas.etiqueta">
+            <field name="name">Diseño</field>
+            <field name="color">2</field>
+        </record>
+        <record id="etiqueta_frontend" model="jcd_tareas.etiqueta">
+            <field name="name">Frontend</field>
+            <field name="color">3</field>
+        </record>
+        <record id="etiqueta_testing" model="jcd_tareas.etiqueta">
+            <field name="name">Testing</field>
+            <field name="color">4</field>
+        </record>
+        <record id="etiqueta_backend" model="jcd_tareas.etiqueta">
+            <field name="name">backend</field>
+            <field name="color">5</field>
+        </record>
+
+        <!-- Proyectos -->
+        <record id="proyecto_1" model="jcd_tareas.jcd_proyecto">
+            <field name="name">Desarrollo de App Móvil</field>
+            <field name="prioridad">1</field>
+            <field name="coste">5000.0</field>
+            <field name="fecha_vencimiento">2025-06-30 12:00:00</field>
+            <field name="description">Proyecto para desarrollar una aplicación móvil para iOS y Android.</field>
+            <field name="activo">True</field>
+            <field name="image" type="base64" file="jcd_tareas/Images/Odoo_Movil.jpg"/>
+        </record>
+
+        <record id="proyecto_2" model="jcd_tareas.jcd_proyecto">
+            <field name="name">Campaña de Marketing</field>
+            <field name="prioridad">2</field>
+            <field name="coste">3000.0</field>
+            <field name="fecha_vencimiento">2025-06-15 12:00:00</field>
+            <field name="description">Lanzamiento de una campaña publicitaria en redes sociales.</field>
+            <field name="activo">True</field>
+            <field name="image" type="base64" file="jcd_tareas/Images/Odoo_Marketing.jpg"/>
+        </record>
+
+        <!-- Tareas para el Proyecto 1 -->
+        <record id="tarea_1" model="jcd_tareas.tarea">
+            <field name="name">Diseñar interfaz de usuario</field>
+            <field name="proyecto_id" ref="proyecto_1"/>
+            <field name="responsable_id" ref="base.user_admin"/>
+            <field name="estado">finalizada</field>
+            <field name="fecha_inicio">2025-05-01</field>
+            <field name="fecha_fin_estimada">2025-05-15</field>
+            <field name="fecha_real_fin">2025-05-14</field>
+            <field name="descripcion">Crear prototipos de la UI en Figma.</field>
+        </record>
+
+        <record id="tarea_2" model="jcd_tareas.tarea">
+            <field name="name">Implementar backend</field>
+            <field name="proyecto_id" ref="proyecto_1"/>
+            <field name="responsable_id" ref="base.user_demo"/>
+            <field name="estado">en_progreso</field>
+            <field name="fecha_inicio">2025-05-16</field>
+            <field name="fecha_fin_estimada">2025-06-01</field>
+            <field name="descripcion">Desarrollar API REST para la app.</field>
+        </record>
+
+        <!-- Tareas para el usuario Jorge -->
+        <record id="tarea_3" model="jcd_tareas.tarea">
+            <field name="name">Desarrollar frontend</field>
+            <field name="proyecto_id" ref="proyecto_1"/>
+            <field name="responsable_id" ref="user_jorge"/>
+            <field name="estado">pendiente</field>
+            <field name="fecha_inicio">2025-06-01</field>
+            <field name="fecha_fin_estimada">2025-06-10</field>
+            <field name="descripcion">Implementar la interfaz de usuario con React.</field>
+            <field name="etiqueta_ids" eval="[(6, 0, [ref('etiqueta_frontend')])]"/>
+        </record>
+
+        <record id="tarea_4" model="jcd_tareas.tarea">
+            <field name="name">Realizar pruebas unitarias</field>
+            <field name="proyecto_id" ref="proyecto_1"/>
+            <field name="responsable_id" ref="user_jorge"/>
+            <field name="estado">pendiente</field>
+            <field name="fecha_inicio">2025-06-10</field>
+            <field name="fecha_fin_estimada">2025-06-15</field>
+            <field name="descripcion">Ejecutar pruebas unitarias para el backend.</field>
+            <field name="etiqueta_ids" eval="[(6, 0, [ref('etiqueta_testing')])]"/>
+        </record>
+    </data>
+</odoo>

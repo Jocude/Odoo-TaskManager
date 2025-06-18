@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Vista Tree para TareaComentario -->
+        <record id="view_tarea_comentario_tree" model="ir.ui.view">
+            <field name="name">tarea.comentario.tree</field>
+            <field name="model">jcd_tareas.tarea.comentario</field>
+            <field name="arch" type="xml">
+                <tree string="Comentarios de Tareas">
+                    <field name="tarea_id"/>
+                    <field name="autor_id"/>
+                    <field name="fecha"/>
+                    <field name="comentario"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Vista Form para TareaComentario -->
+        <record id="view_tarea_comentario_form" model="ir.ui.view">
+            <field name="name">tarea.comentario.form</field>
+            <field name="model">jcd_tareas.tarea.comentario</field>
+            <field name="arch" type="xml">
+                <form string="Comentario de Tarea">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="tarea_id"/>
+                                <field name="autor_id"/>
+                            </group>
+                            <group>
+                                <field name="fecha"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="comentario" placeholder="Escribe tu comentario aquí..."/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

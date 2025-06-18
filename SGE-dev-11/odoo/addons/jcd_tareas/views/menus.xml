@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menú raíz -->
+    <menuitem id="menu_jcd_proyecto" name="Proyectos" sequence="10"/>
+    
+    <!-- Acción del modelo Tarea -->
+    <record id="action_tarea" model="ir.actions.act_window">
+        <field name="name">Tareas</field>
+        <field name="res_model">jcd_tareas.tarea</field>
+        <field name="view_mode">tree,form,kanban</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('jcd_tareas.view_tarea_tree')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('jcd_tareas.view_tarea_form')}),
+            (0, 0, {'view_mode': 'kanban', 'view_id': ref('jcd_tareas.view_tarea_kanban')})]"/>
+    </record>
+
+    <!-- Acción del modelo Etiqueta -->
+    <record id="action_etiqueta" model="ir.actions.act_window">
+        <field name="name">Etiquetas</field>
+        <field name="res_model">jcd_tareas.etiqueta</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Acción para "Mis Tareas" -->
+    <record id="action_mis_tareas" model="ir.actions.act_window">
+        <field name="name">Mis Tareas</field>
+        <field name="res_model">jcd_tareas.tarea</field>
+        <field name="view_mode">tree,form,kanban</field>
+        <field name="domain">[('responsable_id', '=', uid)]</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('jcd_tareas.view_tarea_tree')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('jcd_tareas.view_tarea_form')}),
+            (0, 0, {'view_mode': 'kanban', 'view_id': ref('jcd_tareas.view_tarea_kanban')})]"/>
+    </record>
+
+    <!-- Acción del modelo Tarea Comentario -->
+    <record id="action_tarea_comentario" model="ir.actions.act_window">
+        <field name="name">Comentarios de Tareas</field>
+        <field name="res_model">jcd_tareas.tarea.comentario</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('jcd_tareas.view_tarea_comentario_tree')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('jcd_tareas.view_tarea_comentario_form')})]"/>
+    </record>
+
+    <!-- Submenús -->
+    <menuitem id="submenu_proyectos" name="Gestión de Proyectos" parent="menu_jcd_proyecto" action="jcd_tareas.action_jcd_proyectos" sequence="10"/>
+    <menuitem id="submenu_tareas" name="Tareas" parent="menu_jcd_proyecto" action="action_tarea" sequence="20"/>
+    <menuitem id="submenu_etiquetas" name="Etiquetas" parent="menu_jcd_proyecto" action="action_etiqueta" sequence="30"/>
+    <menuitem id="submenu_mis_tareas" name="Mis Tareas" parent="menu_jcd_proyecto" action="action_mis_tareas" sequence="40"/>
+    <menuitem id="submenu_tarea_comentario" name="Comentarios" parent="menu_jcd_proyecto" action="action_tarea_comentario" sequence="50"/>
+</odoo>

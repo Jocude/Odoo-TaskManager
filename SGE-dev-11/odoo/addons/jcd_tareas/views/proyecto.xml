@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vista Formulario de Proyecto -->
+    <record id="view_jcd_proyecto_form" model="ir.ui.view">
+        <field name="name">jcd_tareas.jcd_proyecto.form</field>
+        <field name="model">jcd_tareas.jcd_proyecto</field>
+        <field name="arch" type="xml">
+            <form string="Proyecto">
+                <sheet>
+                    <group>
+                        <field name="image" widget="image" style="max-width: 200px; max-height: 200px;"/>
+                        <group>
+                            <field name="name" string="Nombre del Proyecto" placeholder="Nombre del Proyecto"/>
+                            <field name="prioridad" string="Prioridad" placeholder="Prioridad"/>
+                            <field name="coste" string="Coste Estimado" placeholder="Coste"/>
+                            <field name="fecha_vencimiento" string="Fecha de Vencimiento" placeholder="Fecha de Vencimiento"/>
+                            <field name="description" string="Descripción" placeholder="Descripción"/>
+                            <field name="activo" string="Proyecto Activo"/>
+                        </group>
+                    </group>
+                    <!-- Tareas del proyecto -->
+                    <notebook>
+                        <page string="Tareas">
+                            <field name="tareas_ids">
+                                <tree editable="bottom">
+                                    <field name="name" string="Nombre"/>
+                                    <field name="estado" string="Estado"/>
+                                    <field name="responsable_id" string="Responsable"/>
+                                    <field name="fecha_inicio" string="Inicio"/>
+                                    <field name="fecha_fin_estimada" string="Fin Estimado"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista de búsqueda -->
+    <record id="view_jcd_proyecto_search" model="ir.ui.view">
+        <field name="name">jcd_tareas.jcd_proyecto.search</field>
+        <field name="model">jcd_tareas.jcd_proyecto</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Proyectos">
+                <field name="name"/>
+                <field name="prioridad"/>
+                <filter string="Activos" name="active" domain="[('activo','=',True)]"/>
+                <filter string="Inactivos" name="inactive" domain="[('activo','=',False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Vista Árbol de Proyecto -->
+    <record id="view_jcd_proyecto_tree" model="ir.ui.view">
+        <field name="name">jcd_tareas.jcd_proyecto.tree</field>
+        <field name="model">jcd_tareas.jcd_proyecto</field>
+        <field name="arch" type="xml">
+            <tree string="Proyectos">
+                <field name="name"/>
+                <field name="prioridad"/>
+                <field name="coste"/>
+                <field name="fecha_vencimiento"/>
+                <field name="activo"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Acción para abrir las vistas -->
+    <record id="action_jcd_proyectos" model="ir.actions.act_window">
+        <field name="name">Proyectos</field>
+        <field name="res_model">jcd_tareas.jcd_proyecto</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_jcd_proyecto_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay proyectos creados
+            </p>
+            <p>
+                Crea tu primer proyecto para comenzar a gestionar tareas.
+            </p>
+        </field>
+    </record>
+
+</odoo>

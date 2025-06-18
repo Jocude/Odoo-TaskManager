@@ -1,0 +1,29 @@
+<odoo>
+    <!-- Vista Formulario de Etiqueta -->
+    <record id="view_etiqueta_form" model="ir.ui.view">
+        <field name="name">jcd_tareas.etiqueta.form</field>
+        <field name="model">jcd_tareas.etiqueta</field>
+        <field name="arch" type="xml">
+            <form string="Etiqueta">
+                <sheet>
+                    <group>
+                        <field name="name" string="Nombre"/>
+                        <field name="color" string="Color"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista Árbol de Etiqueta -->
+    <record id="view_etiqueta_tree" model="ir.ui.view">
+        <field name="name">jcd_tareas.etiqueta.tree</field>
+        <field name="model">jcd_tareas.etiqueta</field>
+        <field name="arch" type="xml">
+            <tree string="Etiquetas">
+                <field name="name" string="Nombre"/>
+                <field name="color" string="Color"/>
+            </tree>
+        </field>
+    </record>
+</odoo>

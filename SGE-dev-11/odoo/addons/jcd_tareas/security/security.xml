@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Grupo de seguridad para administradores de proyectos -->
+        <record id="group_jcd_proyecto_manager" model="res.groups">
+            <field name="name">Administrador de Proyectos</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="users" eval="[(4, ref('base.user_admin'))]"/>
+        </record>
+
+        <!-- Reglas de seguridad para proyectos -->
+        <record id="proyecto_unlink_rule" model="ir.rule">
+            <field name="name">Solo administradores pueden eliminar proyectos</field>
+            <field name="model_id" ref="model_jcd_tareas_jcd_proyecto"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_jcd_proyecto_manager'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="proyecto_user_rule" model="ir.rule">
+            <field name="name">Usuarios pueden ver y editar proyectos pero no eliminarlos</field>
+            <field name="model_id" ref="model_jcd_tareas_jcd_proyecto"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Reglas de seguridad para tareas -->
+        <record id="tarea_unlink_rule" model="ir.rule">
+            <field name="name">Solo administradores pueden eliminar tareas</field>
+            <field name="model_id" ref="model_jcd_tareas_tarea"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_jcd_proyecto_manager'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="tarea_user_rule" model="ir.rule">
+            <field name="name">Usuarios pueden ver y editar tareas pero no eliminarlas</field>
+            <field name="model_id" ref="model_jcd_tareas_tarea"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+    </data>
+</odoo>
