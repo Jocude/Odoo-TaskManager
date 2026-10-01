@@ -1,0 +1,58 @@
+# Odoo 17 + PostgreSQL 15 con el módulo jcd_tareas instalado.
+#   docker compose up -d                          -> Odoo en http://localhost:8069 (admin / admin)
+#   docker compose --profile herramientas up -d   -> además, pgAdmin en http://localhost:8080
+# Los valores se pueden cambiar en un fichero .env (ver .env.example).
+name: odoo-taskmanager
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: ${POSTGRES_USER:-odoo}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-odoo}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  odoo:
+    image: odoo:17.0
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      HOST: db
+      USER: ${POSTGRES_USER:-odoo}
+      PASSWORD: ${POSTGRES_PASSWORD:-odoo}
+    # Crea la base de datos la primera vez (con el español cargado) e instala o actualiza el módulo en cada arranque
+    command: ["--", "-d", "${ODOO_DB:-tareas}", "--db-filter=^${ODOO_DB:-tareas}$$", "--load-language=es_ES", "-i", "jcd_tareas"]
+    ports:
+      - "127.0.0.1:${ODOO_PORT:-8069}:8069"
+    volumes:
+      - ./addons:/mnt/extra-addons:ro
+      - ./config:/etc/odoo:ro
+      - odoo-data:/var/lib/odoo
+    restart: unless-stopped
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    profiles: ["herramientas"]
+    depends_on:
+      - db
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@example.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-cambiame}
+      PGADMIN_SERVER_JSON_FILE: /pgadmin4/servers.json
+    ports:
+      - "127.0.0.1:${PGADMIN_PORT:-8080}:80"
+    volumes:
+      - ./pgadmin/servers.json:/pgadmin4/servers.json:ro
+
+volumes:
+  pgdata:
+  odoo-data:

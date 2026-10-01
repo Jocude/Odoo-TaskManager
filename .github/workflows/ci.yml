@@ -1,0 +1,45 @@
+# En cada push a main y en cada pull request: análisis del código con ruff y tests del módulo en Odoo 17.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Análisis (ruff)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/ruff-action@v4
+        with:
+          src: addons
+      - run: ruff format --check addons
+
+  tests:
+    name: Tests en Odoo 17
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Arrancar PostgreSQL
+        run: docker compose up -d --wait db
+
+      - name: Instalar el módulo (con datos de demo) y pasar los tests
+        run: |
+          docker compose run --rm -T odoo -- -d ci --test-enable --test-tags /jcd_tareas \
+            -i jcd_tareas --stop-after-init --log-level=test 2>&1 | tee odoo.log
+          # Odoo devuelve error si falla algún test; además, no se admite ningún ERROR ni aviso en el log
+          ! grep -E " (ERROR|CRITICAL|WARNING) " odoo.log
+          grep -E "0 failed, 0 error\(s\) of [0-9]+ tests" odoo.log
+
+      - name: Guardar el log
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: odoo-log
+          path: odoo.log

@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Datos de ejemplo. Las fechas son relativas al día de instalación, así siempre hay tareas en curso y retrasadas. -->
+<odoo>
+    <!-- Usuarios -->
+    <record id="user_jorge" model="res.users">
+        <field name="name">Jorge Cuevas</field>
+        <field name="login">jorge</field>
+        <field name="email">jorge@example.com</field>
+        <field name="groups_id" eval="[(4, ref('group_jcd_tareas_user'))]"/>
+    </record>
+
+    <record id="base.user_demo" model="res.users">
+        <field name="groups_id" eval="[(4, ref('group_jcd_tareas_user'))]"/>
+    </record>
+
+    <!-- Etiquetas -->
+    <record id="etiqueta_urgente" model="jcd_tareas.etiqueta">
+        <field name="name">Urgente</field>
+        <field name="color">1</field>
+    </record>
+    <record id="etiqueta_diseno" model="jcd_tareas.etiqueta">
+        <field name="name">Diseño</field>
+        <field name="color">4</field>
+    </record>
+    <record id="etiqueta_frontend" model="jcd_tareas.etiqueta">
+        <field name="name">Frontend</field>
+        <field name="color">3</field>
+    </record>
+    <record id="etiqueta_backend" model="jcd_tareas.etiqueta">
+        <field name="name">Backend</field>
+        <field name="color">10</field>
+    </record>
+    <record id="etiqueta_testing" model="jcd_tareas.etiqueta">
+        <field name="name">Testing</field>
+        <field name="color">7</field>
+    </record>
+    <record id="etiqueta_contenido" model="jcd_tareas.etiqueta">
+        <field name="name">Contenido</field>
+        <field name="color">2</field>
+    </record>
+
+    <!-- Proyectos -->
+    <record id="proyecto_app" model="jcd_tareas.proyecto">
+        <field name="name">App móvil de reservas</field>
+        <field name="prioridad">2</field>
+        <field name="color">4</field>
+        <field name="coste">5000</field>
+        <field name="fecha_vencimiento" eval="(DateTime.today() + relativedelta(days=30)).strftime('%Y-%m-%d')"/>
+        <field name="descripcion">Aplicación para iOS y Android con la que los clientes reservan cita.</field>
+    </record>
+
+    <record id="proyecto_marketing" model="jcd_tareas.proyecto">
+        <field name="name">Campaña de lanzamiento</field>
+        <field name="prioridad">1</field>
+        <field name="color">2</field>
+        <field name="coste">3000</field>
+        <field name="fecha_vencimiento" eval="(DateTime.today() + relativedelta(days=14)).strftime('%Y-%m-%d')"/>
+        <field name="descripcion">Campaña en redes sociales para el lanzamiento de la app.</field>
+    </record>
+
+    <record id="proyecto_web" model="jcd_tareas.proyecto">
+        <field name="name">Migración de la web</field>
+        <field name="prioridad">0</field>
+        <field name="color">10</field>
+        <field name="coste">1200</field>
+        <field name="fecha_vencimiento" eval="(DateTime.today() + relativedelta(days=60)).strftime('%Y-%m-%d')"/>
+        <field name="descripcion">Pasar la web corporativa a un hosting nuevo con HTTPS y copias de seguridad.</field>
+    </record>
+
+    <!-- Tareas: App móvil (cadena de dependencias diseño → backend → frontend → pruebas) -->
+    <record id="tarea_diseno" model="jcd_tareas.tarea">
+        <field name="name">Diseñar la interfaz</field>
+        <field name="proyecto_id" ref="proyecto_app"/>
+        <field name="responsable_id" ref="base.user_admin"/>
+        <field name="prioridad">2</field>
+        <field name="fecha_inicio" eval="(DateTime.today() - relativedelta(days=20)).strftime('%Y-%m-%d')"/>
+        <field name="fecha_fin_estimada" eval="(DateTime.today() - relativedelta(days=8)).strftime('%Y-%m-%d')"/>
+        <field name="horas_estimadas">16</field>
+        <field name="descripcion">Prototipos de las pantallas principales en Figma.</field>
+        <field name="etiqueta_ids" eval="[(6, 0, [ref('etiqueta_diseno')])]"/>
+        <field name="estado">finalizada</field>
+    </record>
+
+    <record id="tarea_backend" model="jcd_tareas.tarea">
+        <field name="name">API REST de reservas</field>
+        <field name="proyecto_id" ref="proyecto_app"/>
+        <field name="responsable_id" ref="base.user_demo"/>
+        <field name="prioridad">3</field>
+        <field name="fecha_inicio" eval="(DateTime.today() - relativedelta(days=7)).strftime('%Y-%m-%d')"/>
+        <field name="fecha_fin_estimada" eval="(DateTime.today() + relativedelta(days=5)).strftime('%Y-%m-%d')"/>
+        <field name="horas_estimadas">40</field>
+        <field name="descripcion">Endpoints de disponibilidad, reserva y cancelación.</field>
+        <field name="etiqueta_ids" eval="[(6, 0, [ref('etiqueta_backend'), ref('etiqueta_urgente')])]"/>
+        <field name="depende_de_ids" eval="[(6, 0, [ref('tarea_diseno')])]"/>
+        <field name="estado">en_progreso</field>
+    </record>
+
+    <record id="tarea_frontend" model="jcd_tareas.tarea">
+        <field name="name">Pantallas de la app</field>
+        <field name="proyecto_id" ref="proyecto_app"/>
+        <field name="responsable_id" ref="user_jorge"/>
+        <field name="prioridad">2</field>
+        <field name="fecha_inicio" eval="(DateTime.today() + relativedelta(days=2)).strftime('%Y-%m-%d')"/>
+        <field name="fecha_fin_estimada" eval="(DateTime.today() + relativedelta(days=15)).strftime('%Y-%m-%d')"/>
+        <field name="horas_estimadas">32</field>
+        <field name="descripcion">Implementar las pantallas del prototipo conectadas a la API.</field>
+        <field name="etiqueta_ids" eval="[(6, 0, [ref('etiqueta_frontend')])]"/>
+        <field name="depende_de_ids" eval="[(6, 0, [ref('tarea_diseno'), ref('tarea_backend')])]"/>
+    </record>
+
+    <record id="tarea_pruebas" model="jcd_tareas.tarea">
+        <field name="name">Pruebas de extremo a extremo</field>
+        <field name="proyecto_id" ref="proyecto_app"/>
+        <field name="responsable_id" ref="user_jorge"/>
+        <field name="prioridad">1</field>
+        <field name="fecha_inicio" eval="(DateTime.today() + relativedelta(days=16)).strftime('%Y-%m-%d')"/>
+        <field name="fecha_fin_estimada" eval="(DateTime.today() + relativedelta(days=22)).strftime('%Y-%m-%d')"/>
+        <field name="horas_estimadas">12</field>
+        <field name="etiqueta_ids" eval="[(6, 0, [ref('etiqueta_testing')])]"/>
+        <field name="depende_de_ids" eval="[(6, 0, [ref('tarea_frontend')])]"/>
+    </record>
+
+    <!-- Tareas: Campaña -->
+    <record id="tarea_calendario" model="jcd_tareas.tarea">
+        <field name="name">Calendario de publicaciones</field>
+        <field name="proyecto_id" ref="proyecto_marketing"/>
+        <field name="responsable_id" ref="base.user_demo"/>
+        <field name="prioridad">1</field>
+        <field name="fecha_inicio" eval="(DateTime.today() - relativedelta(days=10)).strftime('%Y-%m-%d')"/>
+        <field name="fecha_fin_estimada" eval="(DateTime.today() - relativedelta(days=2)).strftime('%Y-%m-%d')"/>
+        <field name="horas_estimadas">6</field>
+        <field name="etiqueta_ids" eval="[(6, 0, [ref('etiqueta_contenido')])]"/>
+        <field name="estado">en_progreso</field>
+    </record>
+
+    <record id="tarea_video" model="jcd_tareas.tarea">
+        <field name="name">Vídeo promocional</field>
+        <field name="proyecto_id" ref="proyecto_marketing"/>
+        <field name="responsable_id" ref="base.user_admin"/>
+        <field name="prioridad">3</field>
+        <field name="fecha_inicio" eval="(DateTime.today() - relativedelta(days=1)).strftime('%Y-%m-%d')"/>
+        <field name="fecha_fin_estimada" eval="(DateTime.today() + relativedelta(days=9)).strftime('%Y-%m-%d')"/>
+        <field name="horas_estimadas">20</field>
+        <field name="etiqueta_ids" eval="[(6, 0, [ref('etiqueta_contenido'), ref('etiqueta_diseno')])]"/>
+        <field name="estado">en_progreso</field>
+    </record>
+
+    <record id="tarea_anuncios" model="jcd_tareas.tarea">
+        <field name="name">Configurar anuncios</field>
+        <field name="proyecto_id" ref="proyecto_marketing"/>
+        <field name="responsable_id" ref="user_jorge"/>
+        <field name="fecha_inicio" eval="(DateTime.today() + relativedelta(days=8)).strftime('%Y-%m-%d')"/>
+        <field name="fecha_fin_estimada" eval="(DateTime.today() + relativedelta(days=12)).strftime('%Y-%m-%d')"/>
+        <field name="horas_estimadas">4</field>
+        <field name="depende_de_ids" eval="[(6, 0, [ref('tarea_video')])]"/>
+    </record>
+
+    <!-- Tareas: Web -->
+    <record id="tarea_backup" model="jcd_tareas.tarea">
+        <field name="name">Copia de seguridad de la web actual</field>
+        <field name="proyecto_id" ref="proyecto_web"/>
+        <field name="responsable_id" ref="user_jorge"/>
+        <field name="prioridad">2</field>
+        <field name="fecha_inicio" eval="(DateTime.today() - relativedelta(days=3)).strftime('%Y-%m-%d')"/>
+        <field name="fecha_fin_estimada" eval="(DateTime.today() - relativedelta(days=1)).strftime('%Y-%m-%d')"/>
+        <field name="horas_estimadas">2</field>
+        <field name="etiqueta_ids" eval="[(6, 0, [ref('etiqueta_backend')])]"/>
+        <field name="estado">finalizada</field>
+    </record>
+
+    <record id="tarea_hosting" model="jcd_tareas.tarea">
+        <field name="name">Contratar hosting y certificado</field>
+        <field name="proyecto_id" ref="proyecto_web"/>
+        <field name="responsable_id" ref="base.user_admin"/>
+        <field name="fecha_inicio" eval="DateTime.today().strftime('%Y-%m-%d')"/>
+        <field name="fecha_fin_estimada" eval="(DateTime.today() + relativedelta(days=4)).strftime('%Y-%m-%d')"/>
+        <field name="horas_estimadas">3</field>
+        <field name="depende_de_ids" eval="[(6, 0, [ref('tarea_backup')])]"/>
+    </record>
+
+    <!-- Registro de tiempo -->
+    <record id="registro_1" model="jcd_tareas.registro_tiempo">
+        <field name="tarea_id" ref="tarea_diseno"/>
+        <field name="usuario_id" ref="base.user_admin"/>
+        <field name="fecha" eval="(DateTime.today() - relativedelta(days=18)).strftime('%Y-%m-%d')"/>
+        <field name="horas">6</field>
+        <field name="descripcion">Bocetos y flujo de reserva</field>
+    </record>
+    <record id="registro_2" model="jcd_tareas.registro_tiempo">
+        <field name="tarea_id" ref="tarea_diseno"/>
+        <field name="usuario_id" ref="base.user_admin"/>
+        <field name="fecha" eval="(DateTime.today() - relativedelta(days=12)).strftime('%Y-%m-%d')"/>
+        <field name="horas">8.5</field>
+        <field name="descripcion">Prototipo en alta fidelidad</field>
+    </record>
+    <record id="registro_3" model="jcd_tareas.registro_tiempo">
+        <field name="tarea_id" ref="tarea_backend"/>
+        <field name="usuario_id" ref="base.user_demo"/>
+        <field name="fecha" eval="(DateTime.today() - relativedelta(days=6)).strftime('%Y-%m-%d')"/>
+        <field name="horas">7</field>
+        <field name="descripcion">Modelo de datos y endpoint de disponibilidad</field>
+    </record>
+    <record id="registro_4" model="jcd_tareas.registro_tiempo">
+        <field name="tarea_id" ref="tarea_backend"/>
+        <field name="usuario_id" ref="base.user_demo"/>
+        <field name="fecha" eval="(DateTime.today() - relativedelta(days=3)).strftime('%Y-%m-%d')"/>
+        <field name="horas">8</field>
+        <field name="descripcion">Reservas y cancelaciones</field>
+    </record>
+    <record id="registro_5" model="jcd_tareas.registro_tiempo">
+        <field name="tarea_id" ref="tarea_calendario"/>
+        <field name="usuario_id" ref="base.user_demo"/>
+        <field name="fecha" eval="(DateTime.today() - relativedelta(days=4)).strftime('%Y-%m-%d')"/>
+        <field name="horas">3</field>
+    </record>
+    <record id="registro_6" model="jcd_tareas.registro_tiempo">
+        <field name="tarea_id" ref="tarea_video"/>
+        <field name="usuario_id" ref="base.user_admin"/>
+        <field name="fecha" eval="DateTime.today().strftime('%Y-%m-%d')"/>
+        <field name="horas">5</field>
+        <field name="descripcion">Guion y grabación</field>
+    </record>
+    <record id="registro_7" model="jcd_tareas.registro_tiempo">
+        <field name="tarea_id" ref="tarea_backup"/>
+        <field name="usuario_id" ref="user_jorge"/>
+        <field name="fecha" eval="(DateTime.today() - relativedelta(days=2)).strftime('%Y-%m-%d')"/>
+        <field name="horas">1.5</field>
+        <field name="descripcion">Volcado de la base de datos y de los ficheros</field>
+    </record>
+
+    <!-- Comentarios -->
+    <record id="comentario_1" model="jcd_tareas.comentario">
+        <field name="tarea_id" ref="tarea_backend"/>
+        <field name="autor_id" ref="base.user_admin"/>
+        <field name="comentario">Acordaos de paginar el listado de reservas.</field>
+    </record>
+    <record id="comentario_2" model="jcd_tareas.comentario">
+        <field name="tarea_id" ref="tarea_calendario"/>
+        <field name="autor_id" ref="base.user_admin"/>
+        <field name="comentario">Va con retraso: ¿necesitas ayuda con los textos?</field>
+    </record>
+</odoo>

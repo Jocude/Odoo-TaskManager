@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_registro_tiempo_tree" model="ir.ui.view">
+        <field name="name">jcd_tareas.registro_tiempo.tree</field>
+        <field name="model">jcd_tareas.registro_tiempo</field>
+        <field name="arch" type="xml">
+            <tree string="Registro de tiempo" editable="top">
+                <field name="fecha"/>
+                <field name="usuario_id" widget="many2one_avatar_user"/>
+                <field name="tarea_id"/>
+                <field name="proyecto_id"/>
+                <field name="descripcion"/>
+                <field name="horas" widget="float_time" sum="Total"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_registro_tiempo_pivot" model="ir.ui.view">
+        <field name="name">jcd_tareas.registro_tiempo.pivot</field>
+        <field name="model">jcd_tareas.registro_tiempo</field>
+        <field name="arch" type="xml">
+            <pivot string="Horas por proyecto">
+                <field name="proyecto_id" type="row"/>
+                <field name="usuario_id" type="col"/>
+                <field name="horas" type="measure" widget="float_time"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_registro_tiempo_graph" model="ir.ui.view">
+        <field name="name">jcd_tareas.registro_tiempo.graph</field>
+        <field name="model">jcd_tareas.registro_tiempo</field>
+        <field name="arch" type="xml">
+            <graph string="Horas por semana" type="bar">
+                <field name="fecha" interval="week"/>
+                <field name="horas" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_registro_tiempo_search" model="ir.ui.view">
+        <field name="name">jcd_tareas.registro_tiempo.search</field>
+        <field name="model">jcd_tareas.registro_tiempo</field>
+        <field name="arch" type="xml">
+            <search string="Buscar registros">
+                <field name="tarea_id"/>
+                <field name="proyecto_id"/>
+                <field name="usuario_id"/>
+                <filter string="Mis registros" name="mios" domain="[('usuario_id', '=', uid)]"/>
+                <filter string="Fecha" name="fecha" date="fecha"/>
+                <group expand="0" string="Agrupar por">
+                    <filter string="Proyecto" name="por_proyecto" context="{'group_by': 'proyecto_id'}"/>
+                    <filter string="Usuario" name="por_usuario" context="{'group_by': 'usuario_id'}"/>
+                    <filter string="Semana" name="por_semana" context="{'group_by': 'fecha:week'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_registro_tiempo" model="ir.actions.act_window">
+        <field name="name">Registro de tiempo</field>
+        <field name="res_model">jcd_tareas.registro_tiempo</field>
+        <field name="view_mode">tree,pivot,graph</field>
+        <field name="search_view_id" ref="view_registro_tiempo_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Todavía no hay horas registradas</p>
+            <p>Apunta aquí, o desde cada tarea, el tiempo que dedicas a cada una.</p>
+        </field>
+    </record>
+</odoo>

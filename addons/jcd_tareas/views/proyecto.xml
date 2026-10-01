@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Formulario -->
+    <record id="view_proyecto_form" model="ir.ui.view">
+        <field name="name">jcd_tareas.proyecto.form</field>
+        <field name="model">jcd_tareas.proyecto</field>
+        <field name="arch" type="xml">
+            <form string="Proyecto">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_ver_tareas" type="object" class="oe_stat_button" icon="fa-tasks">
+                            <field name="tarea_count" widget="statinfo" string="Tareas"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archivado" bg_color="text-bg-danger" invisible="active"/>
+                    <field name="active" invisible="1"/>
+                    <field name="image" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Nombre del proyecto"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="prioridad" widget="priority"/>
+                            <field name="fecha_vencimiento"/>
+                            <field name="coste"/>
+                        </group>
+                        <group>
+                            <field name="progreso" widget="progressbar"/>
+                            <field name="horas_estimadas" widget="float_time"/>
+                            <field name="horas_dedicadas" widget="float_time"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Tareas" name="tareas">
+                            <field name="tarea_ids" context="{'default_proyecto_id': id}">
+                                <tree decoration-danger="retrasada" decoration-muted="estado == 'finalizada'">
+                                    <field name="prioridad" widget="priority"/>
+                                    <field name="name"/>
+                                    <field name="responsable_id" widget="many2one_avatar_user"/>
+                                    <field name="fecha_fin_estimada"/>
+                                    <field name="horas_dedicadas" widget="float_time" sum="Total"/>
+                                    <field name="estado" widget="badge"
+                                           decoration-info="estado == 'pendiente'"
+                                           decoration-warning="estado == 'en_progreso'"
+                                           decoration-success="estado == 'finalizada'"/>
+                                    <field name="retrasada" column_invisible="True"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Descripción" name="descripcion">
+                            <field name="descripcion" placeholder="Objetivo y alcance del proyecto"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Lista -->
+    <record id="view_proyecto_tree" model="ir.ui.view">
+        <field name="name">jcd_tareas.proyecto.tree</field>
+        <field name="model">jcd_tareas.proyecto</field>
+        <field name="arch" type="xml">
+            <tree string="Proyectos">
+                <field name="prioridad" widget="priority"/>
+                <field name="name"/>
+                <field name="fecha_vencimiento"/>
+                <field name="tarea_count"/>
+                <field name="progreso" widget="progressbar"/>
+                <field name="horas_dedicadas" widget="float_time"/>
+                <field name="coste" optional="hide"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Kanban -->
+    <record id="view_proyecto_kanban" model="ir.ui.view">
+        <field name="name">jcd_tareas.proyecto.kanban</field>
+        <field name="model">jcd_tareas.proyecto</field>
+        <field name="arch" type="xml">
+            <kanban sample="1">
+                <field name="id"/>
+                <field name="color"/>
+                <field name="tarea_count"/>
+                <field name="image"/>
+                <templates>
+                    <t t-name="kanban-menu">
+                        <a t-if="widget.editable" role="menuitem" type="edit" class="dropdown-item">Editar</a>
+                        <ul class="oe_kanban_colorpicker" data-field="color"/>
+                    </t>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_global_click o_kanban_record_has_image_fill #{kanban_color(record.color.raw_value)}">
+                            <div t-if="record.image.raw_value" class="o_kanban_image_fill_left d-none d-md-block"
+                                 t-attf-style="background-image: url(#{kanban_image('jcd_tareas.proyecto', 'image', record.id.raw_value)})"/>
+                            <div class="oe_kanban_details">
+                                <strong class="o_kanban_record_title"><field name="name"/></strong>
+                                <div class="mt-1"><field name="prioridad" widget="priority"/></div>
+                                <div class="text-muted small mt-1">
+                                    <i class="fa fa-calendar" title="Vencimiento"/> <field name="fecha_vencimiento"/>
+                                </div>
+                                <div class="mt-2"><field name="progreso" widget="progressbar"/></div>
+                                <div class="mt-2">
+                                    <a name="action_ver_tareas" type="object" role="button" class="btn btn-sm btn-primary">
+                                        <t t-out="record.tarea_count.value"/> tareas
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Búsqueda -->
+    <record id="view_proyecto_search" model="ir.ui.view">
+        <field name="name">jcd_tareas.proyecto.search</field>
+        <field name="model">jcd_tareas.proyecto</field>
+        <field name="arch" type="xml">
+            <search string="Buscar proyectos">
+                <field name="name"/>
+                <filter string="Urgentes" name="urgentes" domain="[('prioridad', '=', '3')]"/>
+                <separator/>
+                <filter string="Archivados" name="archivados" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_proyecto" model="ir.actions.act_window">
+        <field name="name">Proyectos</field>
+        <field name="res_model">jcd_tareas.proyecto</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="search_view_id" ref="view_proyecto_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Crea tu primer proyecto</p>
+            <p>Cada proyecto agrupa sus tareas y muestra el progreso y las horas dedicadas.</p>
+        </field>
+    </record>
+</odoo>

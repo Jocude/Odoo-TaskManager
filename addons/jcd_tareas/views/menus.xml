@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_root" name="Tareas" web_icon="jcd_tareas,static/description/icon.png" sequence="10"
+              groups="group_jcd_tareas_user"/>
+
+    <menuitem id="menu_tareas" name="Tareas" parent="menu_root" action="action_tarea" sequence="10"/>
+    <menuitem id="menu_mis_tareas" name="Mis tareas" parent="menu_root" action="action_mis_tareas" sequence="20"/>
+    <menuitem id="menu_proyectos" name="Proyectos" parent="menu_root" action="action_proyecto" sequence="30"/>
+    <menuitem id="menu_registro_tiempo" name="Registro de tiempo" parent="menu_root" action="action_registro_tiempo"
+              sequence="40"/>
+
+    <menuitem id="menu_configuracion" name="Configuración" parent="menu_root" sequence="90"
+              groups="group_jcd_tareas_manager"/>
+    <menuitem id="menu_etiquetas" name="Etiquetas" parent="menu_configuracion" action="action_etiqueta" sequence="10"/>
+</odoo>

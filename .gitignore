@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.py[cod]
+.ruff_cache/
+
+# Entorno local (contraseñas)
+.env
+
+# Editores y sistema
+.idea/
+.vscode/
+*.swp
+.DS_Store

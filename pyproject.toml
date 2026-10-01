@@ -1,0 +1,16 @@
+# Configuración de ruff (análisis y estilo del código Python del módulo)
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["odoo"]
+
+[tool.ruff.lint.per-file-ignores]
+# En Odoo, los imports de __init__.py registran los modelos y los tests
+"__init__.py" = ["F401"]
+# El manifiesto de Odoo es un diccionario suelto
+"__manifest__.py" = ["B018"]
